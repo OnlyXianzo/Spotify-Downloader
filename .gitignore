@@ -1,0 +1,17 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Log files
+*.log
+
+# Downloaded music
+downloads/
+
+# Executables
+ffmpeg.exe
+ffplay.exe
+ffprobe.exe

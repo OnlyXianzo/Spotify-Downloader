@@ -1,0 +1,39 @@
+spotdl-pro/
+│
+├── app.py                     # Entry point (Tkinter bootstrap)
+│
+├── requirements.txt            # Python dependencies (pip install -r)
+├── README.md                   # Usage, setup, Python version notice
+├── LICENSE                     # Open-source license (MIT recommended)
+│
+├── ffmpeg/                     # External binary (NOT pip)
+│   └── ffmpeg.exe              # Windows (or ffmpeg on Linux/macOS)
+│
+├── src/
+│   ├── __init__.py
+│   │
+│   ├── ui/
+│   │   ├── __init__.py
+│   │   └── main_window.py      # Tkinter UI (SpotDLProUI)
+│   │
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── downloader.py       # DownloadManager
+│   │   └── resources.py        # SystemResourceController
+│   │
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── ffmpeg.py           # FFmpeg detection & PATH injection
+│   │   └── logger.py           # Thread-safe log queue helpers
+│   │
+│   └── config/
+│       └── constants.py        # Python version, thresholds, defaults
+│
+├── downloads/                  # Output directory (auto-created)
+│
+├── logs/                       # Optional persistent logs
+│   └── app.log
+│
+├── .venv/                      # Virtual environment (DO NOT COMMIT)
+│
+└── .gitignore

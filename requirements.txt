@@ -1,0 +1,25 @@
+# ============================================================
+# Spotify Downloader – Python Requirements
+# ============================================================
+
+# Core runtime dependencies
+spotdl>=4.2.0,<5.0.0
+psutil>=5.9.0
+
+# ------------------------------------------------------------
+# Environment Notes (DO NOT install via pip)
+# ------------------------------------------------------------
+# tkinter:
+#   - Bundled with official Python builds on Windows & macOS
+#   - Linux users must install manually:
+#       sudo apt-get install python3-tk
+#
+# ffmpeg:
+#   - External multimedia binary (not a Python package)
+#   - Must be available in:
+#       • System PATH
+#       • OR ./ffmpeg/ffmpeg(.exe) inside application directory
+#
+# Python Version:
+#   - Recommended: Python 3.10 – 3.11
+#   - Python 3.13 is NOT officially supported by spotdl yet
