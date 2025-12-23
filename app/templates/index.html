@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpotDL Pro Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        spotgreen: '#1DB954',
+                        darkbg: '#121212',
+                        cardbg: '#181818'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-darkbg text-gray-900 dark:text-white transition-colors duration-200">
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold flex items-center gap-2">
+                <span class="text-spotgreen">SpotDL</span> Pro
+            </h1>
+            <button id="themeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-cardbg hover:bg-gray-300 dark:hover:bg-gray-700">
+                Running in <span id="modeText">Dark</span> Mode
+            </button>
+        </header>
+
+        <!-- Input Section -->
+        <div class="bg-white dark:bg-cardbg rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Add Tracks</h2>
+            <form id="downloadForm" class="flex gap-4">
+                <input type="text" name="url" id="urlInput" placeholder="Paste Spotify URL here..."
+                       class="flex-1 bg-gray-50 dark:bg-[#282828] border border-gray-300 dark:border-none text-gray-900 dark:text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-spotgreen outline-none">
+                <button type="submit" class="bg-spotgreen hover:bg-[#1ed760] text-black font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">
+                    Download
+                </button>
+            </form>
+        </div>
+
+        <!-- Progress / Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white dark:bg-cardbg rounded-xl p-6 shadow-md text-center">
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Queued</p>
+                <p class="text-3xl font-bold" id="countQueued">0</p>
+            </div>
+            <div class="bg-white dark:bg-cardbg rounded-xl p-6 shadow-md text-center">
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Downloading</p>
+                <p class="text-3xl font-bold text-blue-500" id="countDownloading">0</p>
+            </div>
+            <div class="bg-white dark:bg-cardbg rounded-xl p-6 shadow-md text-center">
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Finished</p>
+                <p class="text-3xl font-bold text-spotgreen" id="countFinished">0</p>
+            </div>
+        </div>
+
+        <!-- Tasks List -->
+        <div class="bg-white dark:bg-cardbg rounded-xl shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Downloads</h2>
+            <div id="taskList" class="space-y-4">
+                <!-- Tasks will be injected here -->
+                <div class="text-center text-gray-500 py-8">No active downloads</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>
