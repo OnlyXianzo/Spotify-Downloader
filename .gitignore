@@ -15,3 +15,6 @@ downloads/
 ffmpeg.exe
 ffplay.exe
 ffprobe.exe
+
+# Security: YouTube/Spotify session cookies
+cookies.txt
