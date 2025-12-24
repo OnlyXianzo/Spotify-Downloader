@@ -30,26 +30,18 @@ class SpotDLWrapper:
         """
         try:
             # 1. Try normal search
-            songs = self.spotdl.search([query])
+            # Spotdl.search might also use asyncio, so we should run it in executor if it blocks or needs loop?
+            # Spotdl.search seems to be sync in v4 API but uses requests/etc.
+            # If it uses asyncio internally, we might have issues here too if run directly in a thread?
+            # But here we are in an async function, we can just run it in executor if strictly blocking.
+            # The previous code ran it directly: `self.spotdl.search([query])`
+            # If that worked, it's fine.
+            loop = asyncio.get_event_loop()
+            songs = await loop.run_in_executor(None, self.spotdl.search, [query])
+
             if songs:
                 return songs[0]
 
-            # 2. Fallback: If query is not a URL, it might be "Artist - Title".
-            # If it IS a URL, maybe we can't do much fallback unless we parse it.
-            # But if the user typed "Artist - Song", and spotdl returned nothing (unlikely for text queries),
-            # we might try to relax it.
-
-            # However, the requirement says "If a YouTube match fails... fallback search using... 'Artist - Title'".
-            # SpotDL search mainly gets metadata from Spotify. The YouTube matching happens *during download* usually,
-            # OR the Song object contains the download_url if found during search (SpotDL v4 tries to find it).
-
-            # If we returned a song but it has no download_url, SpotDL will try to find it on download.
-            # So here we are concerned if *Spotify* metadata isn't found.
-
-            # If the user provided a Spotify URL and it failed, maybe we can scrape the title?
-            # But if spotdl fails on a spotify URL, it's usually an API/Network issue.
-
-            # Let's assume the fallback is for when we can't find the song metadata.
             logger.warning(f"No results for {query}, trying fallback mechanisms.")
             return None
 
@@ -57,27 +49,43 @@ class SpotDLWrapper:
             logger.error(f"Search failed for {query}: {e}")
             return None
 
+    def _threaded_download(self, song: Song):
+        """
+        Helper to run spotdl.download in a thread with its own event loop.
+        """
+        # Create a new event loop for this thread
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            # spotdl.download (sync) calls async code internally.
+            # It likely relies on asyncio.get_event_loop() or asyncio.run().
+            # If it uses get_event_loop(), we just provided one.
+            # If it uses asyncio.run(), it creates a new one, which is fine too.
+            # But typically libraries check get_event_loop().
+            return self.spotdl.download(song)
+        finally:
+            try:
+                # Cancel all tasks?
+                pending = asyncio.all_tasks(loop)
+                for task in pending:
+                    task.cancel()
+                # Run loop to process cancellations
+                if pending:
+                    loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+            except Exception:
+                pass
+            loop.close()
+
     async def download_song(self, song: Song) -> bool:
         """
         Downloads a song. returns True if success.
         """
         try:
             loop = asyncio.get_event_loop()
-            # SpotDL's download returns (song, path)
-            # It performs the YouTube search if download_url is missing.
-            # If that search fails, we can catch it here?
 
-            # SpotDL v4 throws exceptions if download fails.
-            await loop.run_in_executor(None, self.spotdl.download, song)
+            # Use the threaded helper
+            await loop.run_in_executor(None, self._threaded_download, song)
             return True
         except Exception as e:
-            # Here is where "YouTube match fails" likely manifests.
             logger.error(f"Download failed for {song.display_name}: {e}")
-
-            # Fallback: The prompt says "fallback search using... 'Artist - Title'".
-            # If the initial download failed (likely due to no source found),
-            # we can try to force a manual search term?
-            # But `song` object is already defined.
-            # If we want to retry with a different source, we need to modify the song object or use `reinit_song`?
-
             return False
