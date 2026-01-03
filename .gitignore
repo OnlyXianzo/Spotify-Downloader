@@ -174,3 +174,12 @@ __pycache__/
 
 # Windows Executables
 *.exe
+
+# Xianzo Project Specifics
+cookies.txt
+history.json
+*.log
+*.tmp
+
+# Ignore specific cookies folder if you ever use one
+.cookies/
